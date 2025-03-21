@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Whats App web</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <h1 class="title">Let's Chit Chat</h1>
+
+    <div id="chat"></div>
+
+    <div class="wrapper">
+      <input
+        type="text"
+        id="message"
+        class="input"
+        placeholder="Enter message"
+      />
+      <button id="sendBtn">Send</button>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      const sendbtn = document.getElementById("sendBtn");
+      const textMessage = document.getElementById("message");
+      const allChats = document.getElementById("chat");
+
+      socket.on("message", (message) => {
+        const text = document.createElement("li");
+        text.innerText = message;
+        allChats.appendChild(text);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+
+      function handleSend() {
+        // Perform the send action, e.g., sending the message
+        const message = textMessage.value;
+
+        // console.log("Message sent:", textMessage.value);
+        socket.emit("user-input", message);
+
+        textMessage.value = ""; // Clear the input field after sending
+      }
+
+      textMessage.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault(); // Prevent the default behavior (e.g., adding a newline)
+          handleSend();
+        }
+      });
+
+      sendbtn.addEventListener("click", handleSend );
+    </script>
+  </body>
+</html>
